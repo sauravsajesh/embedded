@@ -98,4 +98,4 @@ if __name__ == '__main__':
     main()
 https://github.com/google-coral/pycoral/blob/master/examples/detect_image.py
 python your_script.py -m path/to/your/model.tflite -i path/to/your/input_image.jpg -l path/to/your/labels.txt -t 0.4 -o output_image.png -c 5
-
+test_data/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite
