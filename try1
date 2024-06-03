@@ -96,4 +96,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
+https://github.com/google-coral/pycoral/blob/master/examples/detect_image.py
