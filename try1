@@ -44,7 +44,7 @@ def png_to_svg(input_path, output_path):
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-m', '--model', required=True, help='File path of .tflite file')
-    parser.add_argument('-i', '--input', required=True, help='File path of image to process')
+    parser.add_argument('-i', '--input', default='j.jpg', help='File path of image to process')
     parser.add_argument('-l', '--labels', help='File path of labels file')
     parser.add_argument('-t', '--threshold', type=float, default=0.4, help='Score threshold for detected objects')
     parser.add_argument('-o', '--output', help='File path for the result image with annotations')
@@ -96,3 +96,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
