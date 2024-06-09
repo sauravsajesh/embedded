@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Object Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Upload an image for object detection</h1>
+      <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+      </form>
+      {% if original_image %}
+        <h2>Original Image:</h2>
+        <img src="{{ original_image }}" alt="Original Image">
+      {% endif %}
+      {% if svg_image %}
+        <h2>Detected Objects:</h2>
+        <img src="{{ svg_image }}" alt="SVG Image">
+        <div class="button-container">
+          <button id="print-button">Print</button>
+        </div>
+      {% endif %}
+    </div>
+    <script>
+      document.getElementById('print-button').addEventListener('click', function() {
+        fetch('/print', { method: 'POST' })
+          .then(response => response.json())
+          .then(data => alert(data.message))
+          .catch(error => alert('Error: ' + error));
+      });
+    </script>
+  </body>
+</html>
