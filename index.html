@@ -1,59 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Capture</title>
-</head>
-<body>
-    <h1>Webcam Capture</h1>
-    <div id="video-container">
-        <video id="video" width="640" height="480" autoplay></video>
-        <button id="capture-btn">Capture</button>
-    </div>
-    <canvas id="canvas" style="display: none;"></canvas>
-
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureBtn = document.getElementById('capture-btn');
-
-        // Get access to webcam
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                video.srcObject = stream;
-            })
-            .catch((err) => {
-                console.error('Error accessing webcam:', err);
-            });
-
-        // Capture image from webcam
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert canvas image to data URL
-            const imageDataURL = canvas.toDataURL('image/jpeg');
-
-            // Send captured image to server
-            fetch('/capture', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ image: imageDataURL })
-            })
-            .then((response) => {
-                if (response.ok) {
-                    window.location.href = '/display_svg';
-                } else {
-                    console.error('Failed to capture image:', response.statusText);
-                }
-            })
-            .catch((error) => {
-                console.error('Error capturing image:', error);
-            });
-        });
-    </script>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <title>Object Detection</title>
+  </head>
+  <body>
+    <h1>Upload an image for object detection</h1>
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="Upload">
+    </form>
+    {% if original_image %}
+      <h2>Original Image:</h2>
+      <img src="{{ original_image }}" alt="Original Image">
+    {% endif %}
+    {% if svg_image %}
+      <h2>Detected Objects:</h2>
+      <img src="{{ svg_image }}" alt="SVG Image">
+    {% endif %}
+  </body>
 </html>
