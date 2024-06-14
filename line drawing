@@ -1,0 +1,66 @@
+def preprocess_image(image):
+    # Convert image to grayscale
+    grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Apply Gaussian blur to reduce noise
+    blurred_image = cv2.GaussianBlur(grayscale_image, (5, 5), 0)
+    
+    # Apply adaptive thresholding to create binary image
+    binary_image = cv2.adaptiveThreshold(blurred_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+    
+    return binary_image
+
+def get_contours(binary_image):
+    # Find contours from binary image
+    contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Filter contours based on area
+    filtered_contours = []
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area > 100:  # Adjust area threshold as needed
+            filtered_contours.append(contour)
+    
+    return filtered_contours
+
+def draw_contours(image, contours):
+    # Create a blank white image
+    output_image = np.ones_like(image) * 255
+    
+    # Draw contours on the output image
+    cv2.drawContours(output_image, contours, -1, (0, 0, 0), 1)
+    
+    return output_image
+
+def convert_to_line_drawing(image):
+    # Preprocess the image to obtain a binary representation of edges
+    binary_edges = preprocess_image(image)
+    
+    # Get contours from the binary edges
+    contours = get_contours(binary_edges)
+    
+    return contours
+
+def png_to_svg(input_path, output_path):
+    # Open the PNG image using PIL
+    with Image.open(input_path) as img:
+        # Get the width and height of the image
+        width, height = img.size
+        
+        # Convert the image to RGBA (if it's not already in that format)
+        img = img.convert('RGBA')
+        
+        # Convert the image to base64
+        img_byte_array = io.BytesIO()
+        img.save(img_byte_array, format='PNG')
+        img_base64 = base64.b64encode(img_byte_array.getvalue()).decode('utf-8')
+        
+        # Create an SVG drawing object
+        dwg = svgwrite.Drawing(output_path, size=(width, height))
+        
+        # Embed the PNG image into SVG
+        img_svg = dwg.image(href=f"data:image/png;base64,{img_base64}", size=(width, height))
+        dwg.add(img_svg)
+        
+        # Save the SVG file
+        dwg.save()
